@@ -2,8 +2,8 @@ import { Configuration, OpenAIApi } from "openai";
 
 // OpenAI API 환경 변수 설정
 const configuration = new Configuration({
-  organization: process.env.OPENAI_ORGANIZATION,
-  apiKey: process.env.OPENAI_API_KEY,
+  organization: process.env.local.OPENAI_ORGANIZATION,
+  apiKey: process.env.local.OPENAI_API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
