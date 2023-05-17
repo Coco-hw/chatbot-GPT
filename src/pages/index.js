@@ -118,7 +118,7 @@ export default function Home() {
 
         <div className="flex-1 overflow-auto sm:px-10 pb-4 sm:pb-10">
           <div className="max-w-[800px] mx-auto mt-4 sm:mt-12">
-            {/* 
+            {/*
               메인 채팅 컴포넌트
               messages: 메시지 목록
               loading: 메시지 전송 중인지 여부
@@ -133,7 +133,8 @@ export default function Home() {
             <div ref={messagesEndRef} />
           </div>
         </div>
-        <div className="flex h-[30px] sm:h-50px] border-t border-neutral-300 py-2 px-8 items-center sm:justify-between justify-center"></div>
+
+        <div className="flex h-[30px] sm:h-[50px] border-t border-neutral-300 py-2 px-8 items-center sm:justify-between justify-center"></div>
       </div>
     </>
   );
