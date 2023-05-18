@@ -2,6 +2,24 @@ import { Chat } from "@/components/Chat";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 
+import { db } from "@/firebase";
+import { collection, query, orderBy, addDoc } from "firebase/firestore";
+
+// collection 지정
+const chatCollection = collection(db, "chat-GPT");
+// query 정렬 ((기능x))
+const orderQuery = async () => {
+  const q = query(
+    chatCollection,
+    orderBy("time", "desc")
+  );
+}
+// Firebase에 마지막 message 저장
+const addFirebase = async (messages) => {
+  await addDoc(chatCollection, {time: Date.now(), ...messages[messages.length-1]});
+  // await addDoc(chatCollection, messages[messages.length-1]); 
+}
+
 export default function Home() {
   /*
     메시지 목록을 저장하는 상태로, 메시지의 형태는 다음과 같음
@@ -42,6 +60,7 @@ export default function Home() {
     // 메시지 전송 중임을 표시
     setLoading(true);
 
+
     // /api/chat 에 메시지 목록을 전송하고 응답을 받음
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -67,8 +86,6 @@ export default function Home() {
       return;
     }
 
-    // console.log(result);
-
     // 로딩 상태를 해제하고, 메시지 목록에 응답을 추가
     setLoading(false);
     setMessages((messages) => [...messages, result]);
@@ -77,17 +94,22 @@ export default function Home() {
   // 메시지 목록을 초기화하는 함수
   // 처음 시작할 메시지를 설정
   const handleReset = () => {
-    setMessages([
-      {
-        role: "assistant",
-        content: "안녕? 나는 엘리엇이야. 오늘은 무슨 일이 있었니?",
-      },
-    ]);
+    const message = {
+      role: "assistant",
+      content: "안녕, 나는 소피아란다👵 오늘 하루는 어땠니?",
+    }
+    setMessages([ message, ]);
   };
 
-  // 메시지 목록이 업데이트 될 때마다 맨 아래로 스크롤
+  // 메시지 목록이 업데이트 될 때마다 맨 아래로 스크롤, Firebase에 추가
   useEffect(() => {
     scrollToBottom();
+    // console.log(messages[messages.length-1])
+    if (messages[messages.length-1]) {
+      addFirebase(messages);
+      orderQuery();
+      console.log(Date.now())
+    }
   }, [messages]);
 
   // 컴포넌트가 처음 렌더링될 때 메시지 목록을 초기화
