@@ -7,13 +7,6 @@ import { collection, query, orderBy, addDoc } from "firebase/firestore";
 
 // collection 지정
 const chatCollection = collection(db, "chat-GPT");
-// query 정렬 ((기능x))
-const orderQuery = async () => {
-  const q = query(
-    chatCollection,
-    orderBy("time", "desc")
-  );
-}
 // Firebase에 마지막 message 저장
 const addFirebase = async (messages) => {
   await addDoc(chatCollection, {time: Date.now(), ...messages[messages.length-1]});
@@ -41,6 +34,27 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
+
+  // Firestore에 저장된 메시지 불러오기
+  const getMessages = async () => {
+    const q = query( chatCollection, orderBy("time", "asc") );
+  
+    // Firestore에서 채팅 목록을 조회합니다.
+    const results = await getDocs(q);
+    const newMessages = [];
+  
+    // 가져온 채팅 목록을 newTodos 배열에 담습니다.
+    results.docs.forEach((doc) => {
+      console.log(doc.data());
+      newMessages.push(doc.data());
+    });
+  
+    setMessages(newMessages);
+  }
+  // 컴포넌트가 처음 렌더링 될 때 매시지 목록을 초기화 ==> 리셋 버튼 만든 후 도전해보기!
+  // useEffect(() => {
+  //   getMessages();
+  // }, []);
 
   // 메시지 목록을 끝으로 스크롤
   const scrollToBottom = () => {
